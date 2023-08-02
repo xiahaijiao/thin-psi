@@ -660,10 +660,165 @@ void findAddr3() {
 		//cout << priStr << "|" << addrStr << "|" << flag << "|" << pubX << endl;
 		//cout << priStr << "|" <<flag<<"|"<<pubX << endl;
 		//strncmp()
-	int len_cmp = 4;
-//		int len_cmp = 2;
+		//int len_cmp = 4;
+		int len_cmp = 2;
 		if (strncmp(pubX,"0000000000000000000000000000000000000000",len_cmp) == 0) {
 			cout << priStr << " " << pubStr << endl;
+
+		}
+		index++;
+	}
+}
+
+void gen_power_mod(char* a,char* k,char* n,char* out_pri) {
+	//a**i mod n
+
+
+	int ret;	BN_CTX* ctx = BN_CTX_new();
+
+	BIGNUM* bn_a = BN_new();
+	BIGNUM* bn_k = BN_new();
+	BIGNUM* bn_n = BN_new();
+	BIGNUM* bn_r = BN_new();
+	ret = BN_hex2bn(&bn_a, a);
+	ret = BN_hex2bn(&bn_k, k);
+	ret = BN_hex2bn(&bn_n, n);
+
+	// a**p mod m 
+	//BN_mod_exp(BIGNUM * r, BIGNUM * a, const BIGNUM * p,
+	//	const BIGNUM * m, BN_CTX * ctx);
+
+	ret = BN_mod_exp(bn_r, bn_a , bn_k ,
+		bn_n,  ctx);
+
+
+	//ret = BN_add(bn_r, bn_a, bn_b);
+	//char* BN_bn2hex(const BIGNUM * a);
+
+	char* res = BN_bn2hex(bn_r);
+	//BN_add(BIGNUM * r, const BIGNUM * a, const BIGNUM * b);
+
+	strcpy(out_pri, res);
+
+
+
+	BN_CTX_free(ctx);
+	BN_free(bn_a);
+	BN_free(bn_k);
+	BN_free(bn_n);
+	BN_free(bn_r);
+
+	OPENSSL_free(res);
+
+
+
+
+}
+void findAddr4() {
+	//char* startX = "f99d00000000";
+	//const char* a_str = "73aa7c979bb15317727fe8c587825ba6c3422c67cca28c01ac50b2ca1b7ce93b";
+	const char* n_str = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141";
+	
+	char startX[100] = { 0 };
+	//cout << "startX f99d000000000000 (f99d 0000 ,0000 0000)" << endl;
+	cout << "startX 0000000000000000 (  f99cbdfb599ed010  ,0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798 );startX" << endl;
+	cout << "startX:" << endl;
+	cin >> startX;
+	cout << "baseG:" << endl;
+	char baseG[100] = { 0 };
+	cin >> baseG;
+
+	cout << "a_str: 107361793816595537 73aa7c979bb15317727fe8c587825ba6c3422c67cca28c01ac50b2ca1b7ce93b ,174723607534414371449  779dd6e5189c2695ec5ae789d9bc9fede2b7fd80d66019a65e4a568dbec5a805 ,341948486974166000522343609283189  68450b6d617318cf99cb3172e1682b7ee924dfafad77120055ee9a91fee78e1" << endl;
+	char a_str[100] = { 0 };
+	cin >> a_str;
+	int len_cmp = 4;
+	cout << "len_cmp 过滤长度：默认4" << endl ;
+	cin >> len_cmp;
+
+
+	//LONG_MAX
+		//ULONG_MAX
+	unsigned long index = 0;
+	//unsigned long count = ULONG_MAX; //0xffff ffffUL
+	unsigned long count = ULLONG_MAX; //0xffffffffffffffffu
+	//unsigned int count = UINT_MAX;
+	int isRandom = 0;
+	cout << "is random 1(random) 0 (not random)" << endl;
+	cin >> isRandom;
+	// srand((unsigned)1);
+	srand((unsigned)time(NULL));
+
+
+	cout << "baseG: " << baseG <<" a_str 基数pri=a**k mod p "<< a_str  <<" len_cmp: "<< len_cmp << " ,isRandom:" << isRandom << ",startX:" << startX << endl;
+
+
+	while (true)
+	{
+		if (index > count)
+		{
+			break;
+		}
+
+		char indexStr[100] = { 0 };
+		//sprintf(indexStr, "%lx | %lx",index,count);
+		sprintf(indexStr, "%lx", index);
+		//cout << indexStr << endl;
+
+		//cout << index << "," << count << endl;
+		//char* priStr = "f9a9013bd8be";
+		char priStr[100] = { 0 };
+
+		//------------ 根据不同逻辑选择 k
+		if (isRandom == 0) {
+			addBn(startX, indexStr, priStr);
+		}
+		else {
+			// char* pubStr = (char*)malloc(100);
+			//genRandom(priStr);
+
+
+			gen_power_mod((char*)a_str , (char*)indexStr , (char*)n_str, (char*)priStr);
+
+
+			// cout<<priStr<<endl;
+		}
+
+
+
+
+
+
+
+
+		// addBn(startX, indexStr, priStr);
+		char pubStr[256] = { 0 };
+		//getPub(priStr, pubStr);
+		//getPub(priStr, pubStr);
+
+
+
+
+		getPubBase(priStr, baseG, pubStr);
+
+		  
+		char flag[10] = { 0 };
+		char pubX[100] = { 0 };
+
+		strncpy(flag, pubStr, 2);
+		strncpy(pubX, pubStr + 2, strlen(pubStr) - 2);
+
+		char targetAddress[] = "16jY7qLJnxb7CHZyqBP8qca9d51gAjyXQN"; 
+		
+		//int len_cmp = 2;
+
+
+		//cout << indexStr <<" " << priStr << " " << pubStr << endl;
+
+
+
+		if (strncmp(pubX, "0000000000000000000000000000000000000000", len_cmp) == 0) {
+			//cout << priStr << " " << pubStr << endl;
+			cout << indexStr << " " << priStr << " " << pubStr << endl;
 
 		}
 		index++;
@@ -5524,7 +5679,8 @@ void test_bsgs(){
 
 	// test_bsgs_lookup();
 	// test_bsgs_split();
-	findAddr3();
+	//findAddr3();
+	findAddr4();
 
 
 }
