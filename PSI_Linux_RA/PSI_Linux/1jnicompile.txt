@@ -1,0 +1,4 @@
+ 
+javac -d .  .\PSINativeRA.java
+   //本目录下生成 class：com/rongan/PSINtiveRA.class
+ javah -classpath ./ -jni com.rongan.PSINativeRA
