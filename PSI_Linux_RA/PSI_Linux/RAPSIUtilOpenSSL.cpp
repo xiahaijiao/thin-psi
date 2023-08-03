@@ -720,19 +720,23 @@ void findAddr4() {
 	const char* n_str = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141";
 	
 	char startX[100] = { 0 };
-	//cout << "startX f99d000000000000 (f99d 0000 ,0000 0000)" << endl;
-	cout << "startX 0000000000000000 (  f99cbdfb599ed010  ,0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798 );startX" << endl;
+
+	cout << "startX： 0000000000000000 (hex),baseG: 0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798 " << endl;
+	cout << "a_str: 107361793816595537 73aa7c979bb15317727fe8c587825ba6c3422c67cca28c01ac50b2ca1b7ce93b ,174723607534414371449  779dd6e5189c2695ec5ae789d9bc9fede2b7fd80d66019a65e4a568dbec5a805 ,341948486974166000522343609283189  68450b6d617318cf99cb3172e1682b7ee924dfafad77120055ee9a91fee78e1" << endl;
+	cout << "len_cmp: filter length (default 4) ,is random 1(random) 0 (not random) " << endl;
+	
 	cout << "startX:" << endl;
 	cin >> startX;
 	cout << "baseG:" << endl;
 	char baseG[100] = { 0 };
 	cin >> baseG;
 
-	cout << "a_str: 107361793816595537 73aa7c979bb15317727fe8c587825ba6c3422c67cca28c01ac50b2ca1b7ce93b ,174723607534414371449  779dd6e5189c2695ec5ae789d9bc9fede2b7fd80d66019a65e4a568dbec5a805 ,341948486974166000522343609283189  68450b6d617318cf99cb3172e1682b7ee924dfafad77120055ee9a91fee78e1" << endl;
+	//cout << "a_str: 107361793816595537 73aa7c979bb15317727fe8c587825ba6c3422c67cca28c01ac50b2ca1b7ce93b ,174723607534414371449  779dd6e5189c2695ec5ae789d9bc9fede2b7fd80d66019a65e4a568dbec5a805 ,341948486974166000522343609283189  68450b6d617318cf99cb3172e1682b7ee924dfafad77120055ee9a91fee78e1" << endl;
+	cout << "a_str:" << endl;
 	char a_str[100] = { 0 };
 	cin >> a_str;
 	int len_cmp = 4;
-	cout << "len_cmp 过滤长度：默认4" << endl ;
+	cout << "len_cmp:" << endl ;
 	cin >> len_cmp;
 
 
@@ -749,19 +753,27 @@ void findAddr4() {
 	srand((unsigned)time(NULL));
 
 
-	cout << "baseG: " << baseG <<" a_str 基数pri=a**k mod p "<< a_str  <<" len_cmp: "<< len_cmp << " ,isRandom:" << isRandom << ",startX:" << startX << endl;
+	cout<<"startX: "<< startX << " ,baseG: " << baseG << " a_str 基数pri=a**k mod p : " << a_str << " len_cmp: " << len_cmp << " ,isRandom:" << isRandom << endl;
+	int ret = 0;
+	BIGNUM* bn_index = BN_new();
+	ret = BN_hex2bn(&bn_index, startX);
+
 
 
 	while (true)
 	{
-		if (index > count)
+		/*if (index > count)
 		{
 			break;
-		}
+		}*/
 
-		char indexStr[100] = { 0 };
+		//char indexStr[100] = { 0 };
 		//sprintf(indexStr, "%lx | %lx",index,count);
-		sprintf(indexStr, "%lx", index);
+		//sprintf(indexStr, "%lx", index);
+		char* indexStr =  BN_bn2hex(bn_index );
+
+
+
 		//cout << indexStr << endl;
 
 		//cout << index << "," << count << endl;
@@ -821,7 +833,12 @@ void findAddr4() {
 			cout << indexStr << " " << priStr << " " << pubStr << endl;
 
 		}
-		index++;
+		//index++;
+
+		ret= BN_add(bn_index, bn_index , BN_value_one() );
+
+		OPENSSL_free(indexStr);
+
 	}
 }
 
