@@ -787,9 +787,14 @@ void findAddr4() {
 		else {
 			// char* pubStr = (char*)malloc(100);
 			//genRandom(priStr);
-
+/*
+			char* indexStr_free = BN_bn2hex(bn_index);
+			strcpy(indexStr,indexStr_free)
+			*/
 
 			gen_power_mod((char*)a_str , (char*)indexStr , (char*)n_str, (char*)priStr);
+
+			//OPENSSL_free(indexStr_free);
 
 
 			// cout<<priStr<<endl;
